@@ -1,0 +1,43 @@
+Always show details
+
+Copy
+import os
+
+# Create a simulated DevOps project folder structure with placeholder code files
+
+base_dir = "/mnt/data/Yitzhak_Segal_DevOps_Portfolio"
+
+projects = {
+    "01_Nodejs_CICD_Pipeline": {
+        "README.md": "# Node.js CI/CD Pipeline\n\nThis project demonstrates CI/CD using GitHub Actions, Docker, and AWS EC2.",
+        "Dockerfile": "FROM node:16\nWORKDIR /app\nCOPY . .\nRUN npm install\nCMD [\"npm\", \"start\"]",
+        "deploy.sh": "#!/bin/bash\nscp docker-image user@ec2:/home/ubuntu/\nssh user@ec2 'docker run -d -p 80:80 my-node-app'"
+    },
+    "02_Terraform_AWS_Infrastructure": {
+        "main.tf": 'provider "aws" {\n  region = "us-east-1"\n}\nresource "aws_instance" "example" {\n  ami = "ami-123456"\n  instance_type = "t2.micro"\n}',
+        "variables.tf": 'variable "region" {\n  default = "us-east-1"\n}'
+    },
+    "03_Prometheus_Grafana_Monitoring": {
+        "docker-compose.yml": "version: '3'\nservices:\n  prometheus:\n    image: prom/prometheus\n  grafana:\n    image: grafana/grafana",
+        "prometheus.yml": "global:\n  scrape_interval: 15s\nscrape_configs:\n  - job_name: 'node'\n    static_configs:\n      - targets: ['localhost:9100']"
+    },
+    "04_ELK_Logging_Stack": {
+        "docker-compose.yml": "version: '3'\nservices:\n  elasticsearch:\n    image: elasticsearch:7.9.2\n  logstash:\n    image: logstash:7.9.2\n  kibana:\n    image: kibana:7.9.2",
+        "logstash.conf": "input { beats { port => 5044 } }\noutput { elasticsearch { hosts => [\"elasticsearch:9200\"] } }"
+    }
+}
+
+# Create directories and files
+for project, files in projects.items():
+    project_path = os.path.join(base_dir, project)
+    os.makedirs(project_path, exist_ok=True)
+    for filename, content in files.items():
+        with open(os.path.join(project_path, filename), "w") as f:
+            f.write(content)
+
+# Zip the entire portfolio
+import shutil
+zip_path = shutil.make_archive(base_dir, 'zip', base_dir)
+zip_path
+Result
+'/mnt/data/Yitzhak_Segal_DevOps_Portfolio.zip'
